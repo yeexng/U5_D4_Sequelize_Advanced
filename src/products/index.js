@@ -2,6 +2,8 @@ import express from "express";
 import createHttpError from "http-errors";
 import { Op } from "sequelize";
 import CategoriesModel from "../categories/model.js";
+import ReviewsModel from "../reviews/model.js";
+import UsersModel from "../users/model.js";
 import ProductsModel from "./model.js";
 import ProductsCategoriesModel from "./productsCategoriesModel.js";
 
@@ -41,6 +43,13 @@ productsRouter.get("/", async (req, res, next) => {
     const products = await ProductsModel.findAndCountAll({
       attributes: ["name", "price", "description", "productId"],
       include: [
+        {
+          model: ReviewsModel,
+          include: [
+            { model: UsersModel, attributes: ["firstName", "lastName"] },
+          ],
+          attributes: ["content"],
+        },
         {
           model: CategoriesModel,
           attributes: ["categoryName"],

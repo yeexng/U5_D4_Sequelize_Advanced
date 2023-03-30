@@ -9,6 +9,8 @@ import {
 import { pgConnect } from "./db.js";
 import productsRouter from "./products/index.js";
 import categoriesRouter from "./categories/index.js";
+import usersRouter from "./users/index.js";
+import reviewsRouter from "./reviews/index.js";
 
 const server = Express();
 const port = process.env.PORT || 3005;
@@ -20,6 +22,8 @@ server.use(Express.json());
 //Endpoints
 server.use("/products", productsRouter);
 server.use("/categories", categoriesRouter);
+server.use("/users", usersRouter);
+server.use("/products", reviewsRouter);
 
 //Error Handlers
 server.use(badRequestErrorHandler);

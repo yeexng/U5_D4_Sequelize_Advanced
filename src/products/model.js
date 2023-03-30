@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import CategoriesModel from "../categories/model.js";
 import sequelize from "../db.js";
+import ReviewsModel from "../reviews/model.js";
 import ProductsCategoriesModel from "./productsCategoriesModel.js";
 
 const ProductsModel = sequelize.define("product", {
@@ -33,8 +34,13 @@ const ProductsModel = sequelize.define("product", {
 });
 
 // 1 to many relationship
-// UsersModel.hasMany(BlogsModel, { foreignKey: { name: "userId", allowNull: false } })
-// BlogsModel.belongsTo(UsersModel, { foreignKey: { name: "userId", allowNull: false } })
+ProductsModel.hasMany(ReviewsModel, {
+  foreignKey: { name: "productId", allowNull: true },
+});
+
+ReviewsModel.belongsTo(ProductsModel, {
+  foreignKey: { name: "productId", allowNull: true },
+});
 
 // Many to many
 ProductsModel.belongsToMany(CategoriesModel, {

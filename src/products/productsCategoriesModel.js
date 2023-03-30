@@ -10,3 +10,5 @@ const ProductsCategoriesModel = sequelize.define("productCategory", {
 });
 
 export default ProductsCategoriesModel;
+
+//this act like a bridge that connect two columns
