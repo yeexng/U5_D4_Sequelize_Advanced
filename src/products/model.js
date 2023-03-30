@@ -1,5 +1,7 @@
 import { DataTypes } from "sequelize";
+import CategoriesModel from "../categories/model.js";
 import sequelize from "../db.js";
+import ProductsCategoriesModel from "./productsCategoriesModel.js";
 
 const ProductsModel = sequelize.define("product", {
   productId: {
@@ -16,10 +18,6 @@ const ProductsModel = sequelize.define("product", {
     type: DataTypes.STRING(50),
     allowNull: false,
   },
-  category: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-  },
   description: {
     type: DataTypes.STRING(),
     allowNull: true,
@@ -32,6 +30,20 @@ const ProductsModel = sequelize.define("product", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+});
+
+// 1 to many relationship
+// UsersModel.hasMany(BlogsModel, { foreignKey: { name: "userId", allowNull: false } })
+// BlogsModel.belongsTo(UsersModel, { foreignKey: { name: "userId", allowNull: false } })
+
+// Many to many
+ProductsModel.belongsToMany(CategoriesModel, {
+  through: ProductsCategoriesModel,
+  foreignKey: { name: "productId", allowNull: false },
+});
+CategoriesModel.belongsToMany(ProductsModel, {
+  through: ProductsCategoriesModel,
+  foreignKey: { name: "categoryId", allowNull: false },
 });
 
 export default ProductsModel;

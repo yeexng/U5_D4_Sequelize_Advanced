@@ -1,13 +1,22 @@
 import express from "express";
 import createHttpError from "http-errors";
 import { Op } from "sequelize";
+import CategoriesModel from "../categories/model.js";
 import ProductsModel from "./model.js";
+import ProductsCategoriesModel from "./productsCategoriesModel.js";
 
 const productsRouter = express.Router();
 
 productsRouter.post("/", async (req, res, next) => {
   try {
     const { productId } = await ProductsModel.create(req.body);
+    if (req.body.categories) {
+      await ProductsCategoriesModel.bulkCreate(
+        req.body.categories.map((c) => {
+          return { productId: productId, categoryId: category };
+        })
+      );
+    }
     res.status(201).send({ productId });
   } catch (error) {
     next(error);
@@ -30,6 +39,15 @@ productsRouter.get("/", async (req, res, next) => {
     }
 
     const products = await ProductsModel.findAndCountAll({
+      attributes: ["name", "price", "description", "productId"],
+      include: [
+        {
+          model: CategoriesModel,
+          attributes: ["categoryName"],
+          through: { attributes: [] },
+        },
+        // to exclude from the results the junction table rows --> through: { attributes: [] }
+      ],
       where: { ...query },
       limit: req.query.limit,
       offset: req.query.offset,
@@ -101,6 +119,18 @@ productsRouter.delete("/:productId", async (req, res, next) => {
         )
       );
     }
+  } catch (error) {
+    next(error);
+  }
+});
+
+productsRouter.post("/:productId/categories", async (req, res, next) => {
+  try {
+    const { id } = await ProductsCategoriesModel.create({
+      productId: req.params.productId,
+      categoryId: req.body.categoryId,
+    });
+    res.send({ id });
   } catch (error) {
     next(error);
   }

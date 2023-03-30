@@ -8,6 +8,7 @@ import {
 } from "./errorHandlers.js";
 import { pgConnect } from "./db.js";
 import productsRouter from "./products/index.js";
+import categoriesRouter from "./categories/index.js";
 
 const server = Express();
 const port = process.env.PORT || 3005;
@@ -18,6 +19,7 @@ server.use(Express.json());
 
 //Endpoints
 server.use("/products", productsRouter);
+server.use("/categories", categoriesRouter);
 
 //Error Handlers
 server.use(badRequestErrorHandler);
